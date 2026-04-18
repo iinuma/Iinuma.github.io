@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>空間に描くレーザーお絵描き | Maker Faire Tokyo 2026</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kino Gothic ProN", Meiryo, sans-serif;
+      background-color: #fff;
+      color: #37352f;
+      line-height: 1.75;
+    }
+
+    .page-wrapper {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 80px 96px 200px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #2ecc71;
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    h1.page-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+      line-height: 1.3;
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #9b9b9b;
+      margin-bottom: 48px;
+    }
+
+    h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-top: 40px;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    p {
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+
+    ul {
+      padding-left: 1.5em;
+      margin-bottom: 8px;
+    }
+
+    ul li {
+      margin-bottom: 4px;
+      font-size: 1rem;
+    }
+
+    .page-image {
+      width: 100%;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .image-placeholder {
+      width: 100%;
+      aspect-ratio: 4/3;
+      background: #f7f6f3;
+      border: 2px dashed #e0ddd8;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #aaa;
+      font-size: 0.9rem;
+    }
+
+    .video-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      margin-bottom: 16px;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .section {
+      margin-bottom: 8px;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 8px;
+      font-size: 1rem;
+    }
+
+    .spec-table th,
+    .spec-table td {
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid #e8e8e7;
+    }
+
+    .spec-table th {
+      font-weight: 600;
+      width: 36%;
+      color: #5c5c5c;
+    }
+
+    .patent-note {
+      display: inline-block;
+      background: #fff3cd;
+      border-left: 4px solid #f0b429;
+      padding: 10px 16px;
+      border-radius: 0 4px 4px 0;
+      font-size: 0.9rem;
+      margin-top: 8px;
+      margin-bottom: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .page-wrapper {
+        padding: 48px 24px 100px;
+      }
+
+      h1.page-title {
+        font-size: 1.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <div class="badge">Maker Faire Tokyo 2026 出展予定</div>
+
+    <h1 class="page-title">空間に描く<br>レーザーお絵描き</h1>
+    <p class="subtitle">レーザーガルバノ描画装置 — iinuma</p>
+
+    <div class="section">
+      <h2>■ 作品について</h2>
+      <img class="page-image" src="images/BeamTrace01.png" alt="レーザーガルバノ装置">
+      <img class="page-image" src="images/BeamTrace02.png" alt="レーザービーム投影の様子">
+      <p>ESP32で2つのガルバノミラーを高速制御し、グリーンレーザーで空間に線画を描く装置です。</p>
+      <p>スマホアプリで描いたイラストをリアルタイムで投影でき、広告・文字・図形などをインパクトのある形で表示できます。設置型の新しい広告媒体・アート表現としての活用も提案します。</p>
+      <p class="patent-note">特許申請中</p>
+    </div>
+
+    <div class="section">
+      <h2>■ デモ動画</h2>
+      <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/pHyrT2Ik5Uo" allowfullscreen></iframe>
+      </div>
+      <div class="video-wrapper">
+        <iframe src="https://www.youtube.com/embed/jBVQ-rWKrIc" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>■ 技術仕様</h2>
+      <table class="spec-table">
+        <tr>
+          <th>制御マイコン</th>
+          <td>ESP32</td>
+        </tr>
+        <tr>
+          <th>レーザー</th>
+          <td>グリーンレーザー（5mW以下）</td>
+        </tr>
+        <tr>
+          <th>走査方式</th>
+          <td>2軸ガルバノミラー制御</td>
+        </tr>
+        <tr>
+          <th>描画内容</th>
+          <td>線画（ベクター形式）</td>
+        </tr>
+        <tr>
+          <th>操作方法</th>
+          <td>スマホアプリ（iOS）によるリアルタイム制御</td>
+        </tr>
+        <tr>
+          <th>本体サイズ</th>
+          <td>300mm × 100mm × 100mm</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="section">
+      <h2>■ 特徴</h2>
+      <ul>
+        <li>空間（壁・スクリーン・煙幕など）にレーザーで線画を投影</li>
+        <li>約1分のセットアップでインパクトのある展示が可能</li>
+        <li>スマホアプリで描いたイラストをその場でリアルタイム投影</li>
+        <li>設置型広告・アートインスタレーションとしての応用が可能</li>
+        <li>特許申請中（技術の独自性を保証）</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>■ 出展カテゴリ</h2>
+      <p>第1希望：エレクトロニクス（電子工作）</p>
+      <p>第2希望：デザイン／アート／ファッション</p>
+    </div>
+
+  </div>
+</body>
+</html>
