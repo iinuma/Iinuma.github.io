@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>風向きライド Aeolus — インストール手順</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
+      background: #f0f4f8;
+      color: #1a202c;
+      padding: 24px 16px 48px;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .app-icon {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, #3182ce, #63b3ed);
+      border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 40px;
+      margin: 0 auto 14px;
+      box-shadow: 0 4px 12px rgba(49,130,206,0.3);
+    }
+    .header h1 { font-size: 1.3rem; font-weight: 700; color: #2d3748; }
+    .header p  { font-size: 0.9rem; color: #718096; margin-top: 4px; }
+
+    .steps { display: flex; flex-direction: column; gap: 16px; max-width: 480px; margin: 0 auto; }
+
+    .step {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .step-num {
+      width: 36px; height: 36px;
+      background: #3182ce;
+      color: white;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; font-weight: 700;
+      flex-shrink: 0;
+    }
+    .step-body { flex: 1; }
+    .step-body h2 { font-size: 1rem; font-weight: 700; margin-bottom: 6px; color: #2d3748; }
+    .step-body p  { font-size: 0.875rem; color: #4a5568; line-height: 1.6; }
+
+    .step-visual {
+      margin-top: 12px;
+      background: #f7fafc;
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+    }
+
+    /* Mail mockup */
+    .mail-mock {
+      background: white;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px;
+      text-align: left;
+    }
+    .mail-from  { font-size: 0.7rem; color: #a0aec0; margin-bottom: 2px; }
+    .mail-title { font-size: 0.85rem; font-weight: 700; color: #2d3748; margin-bottom: 8px; }
+    .mail-body  { font-size: 0.75rem; color: #718096; margin-bottom: 10px; line-height: 1.5; }
+    .mail-btn {
+      display: inline-block;
+      background: #0071e3;
+      color: white;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* App Store mockup */
+    .appstore-mock {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: white;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .tf-icon {
+      width: 48px; height: 48px;
+      background: linear-gradient(135deg, #00c7ff, #0071e3);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+      flex-shrink: 0;
+    }
+    .appstore-info { flex: 1; text-align: left; }
+    .appstore-info .name { font-size: 0.85rem; font-weight: 700; }
+    .appstore-info .sub  { font-size: 0.7rem; color: #718096; }
+    .get-btn {
+      background: #e8f0fe;
+      color: #0071e3;
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    /* TestFlight mockup */
+    .tf-mock {
+      background: white;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .tf-app-row {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+    }
+    .tf-app-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, #3182ce, #63b3ed);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+    }
+    .tf-app-name { font-size: 0.85rem; font-weight: 700; }
+    .tf-app-ver  { font-size: 0.7rem; color: #718096; }
+    .install-btn {
+      display: block;
+      background: #0071e3;
+      color: white;
+      border-radius: 8px;
+      padding: 9px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    /* Done */
+    .done-card {
+      background: linear-gradient(135deg, #38a169, #68d391);
+      border-radius: 16px;
+      padding: 24px 20px;
+      text-align: center;
+      color: white;
+      box-shadow: 0 4px 12px rgba(56,161,105,0.3);
+    }
+    .done-card .emoji { font-size: 2.5rem; margin-bottom: 8px; }
+    .done-card h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+    .done-card p  { font-size: 0.875rem; opacity: 0.9; }
+
+    .arrow {
+      text-align: center;
+      font-size: 1.4rem;
+      color: #a0aec0;
+      margin: -4px 0;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="app-icon">🚴</div>
+  <h1>風向きライド Aeolus</h1>
+  <p>インストール手順（TestFlight経由）</p>
+</div>
+
+<div class="steps">
+
+  <!-- Step 1 -->
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <h2>招待メールを確認する</h2>
+      <p>送信者から届いたTestFlightの招待メールを開いてください。</p>
+      <div class="step-visual">
+        <div class="mail-mock">
+          <div class="mail-from">送信元: no_reply@email.apple.com</div>
+          <div class="mail-title">✈️ TestFlight へのご招待</div>
+          <div class="mail-body">風向きライド Aeolusのベータ版テストに招待されました。</div>
+          <div class="mail-btn">TestFlight で表示</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">↓</div>
+
+  <!-- Step 2 -->
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <h2>TestFlight アプリを入手する</h2>
+      <p>App Store で「TestFlight」を検索してインストールしてください。無料です。</p>
+      <div class="step-visual">
+        <div class="appstore-mock">
+          <div class="tf-icon">✈️</div>
+          <div class="appstore-info">
+            <div class="name">TestFlight</div>
+            <div class="sub">Apple • 無料</div>
+          </div>
+          <div class="get-btn">入手</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">↓</div>
+
+  <!-- Step 3 -->
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <h2>メールの「TestFlight で表示」をタップ</h2>
+      <p>TestFlightアプリが起動し、インストール画面が表示されます。</p>
+    </div>
+  </div>
+
+  <div class="arrow">↓</div>
+
+  <!-- Step 4 -->
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <h2>「インストール」をタップ</h2>
+      <p>TestFlight内の画面でインストールボタンを押してください。</p>
+      <div class="step-visual">
+        <div class="tf-mock">
+          <div class="tf-app-row">
+            <div class="tf-app-icon">🚴</div>
+            <div>
+              <div class="tf-app-name">風向きライド Aeolus</div>
+              <div class="tf-app-ver">バージョン 1.0</div>
+            </div>
+          </div>
+          <div class="install-btn">インストール</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow">↓</div>
+
+  <!-- Done -->
+  <div class="done-card">
+    <div class="emoji">🎉</div>
+    <h2>インストール完了！</h2>
+    <p>ホーム画面に「風向きライド Aeolus」が表示されます。<br>タップして起動してください。</p>
+  </div>
+
+</div>
+</body>
+</html>
