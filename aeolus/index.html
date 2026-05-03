@@ -20,6 +20,30 @@
       margin-bottom: 20px;
       color: #2d3748;
     }
+    .day-toggle {
+      display: flex;
+      background: #e2e8f0;
+      border-radius: 10px;
+      padding: 3px;
+      margin-bottom: 16px;
+    }
+    .day-btn {
+      flex: 1;
+      padding: 9px;
+      border: none;
+      background: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #718096;
+      transition: all 0.2s;
+    }
+    .day-btn.active {
+      background: white;
+      color: #2d3748;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+    }
     .card {
       background: white;
       border-radius: 16px;
@@ -166,6 +190,10 @@
 
 <div class="card">
   <h2>ライド設定</h2>
+  <div class="day-toggle">
+    <button id="btnToday"    class="day-btn active" onclick="setDay(0)">今日</button>
+    <button id="btnTomorrow" class="day-btn"        onclick="setDay(1)">明日</button>
+  </div>
   <div class="inputs">
     <div class="input-group">
       <label>出発時刻</label>
@@ -214,17 +242,19 @@ const DIRS = [
   { name: '北西', label: 'NW', deg: 315 },
 ];
 
+let selectedDay = 0; // 0=今日, 1=明日
+
+function setDay(d) {
+  selectedDay = d;
+  document.getElementById('btnToday').classList.toggle('active', d === 0);
+  document.getElementById('btnTomorrow').classList.toggle('active', d === 1);
+}
+
 function degToRad(d) { return d * Math.PI / 180; }
 
-// Headwind component: positive = headwind, negative = tailwind
 function headwindComponent(travelDeg, windFromDeg, windSpeed) {
   const diff = degToRad(travelDeg - windFromDeg);
   return windSpeed * Math.cos(diff);
-}
-
-function timeToHour(timeStr) {
-  const [h, m] = timeStr.split(':').map(Number);
-  return h + m / 60;
 }
 
 function setStatus(msg, isError = false) {
@@ -235,22 +265,21 @@ function setStatus(msg, isError = false) {
 
 function show(id) { document.getElementById(id).classList.remove('hidden'); }
 
-async function getWindAtHour(lat, lon, targetHour) {
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&timezone=auto&forecast_days=1`;
-  const res = await fetch(url);
-  const data = await res.json();
-  const hours = data.hourly.time.map(t => new Date(t).getHours());
-  // find closest hour
-  let bestIdx = 0;
+// forecast_days=2 で取得したデータから、dayOffset日目のtargetHour時のデータを返す
+// Open-Meteoは深夜0時から24時間×日数分のデータを順番に返す
+function findWind(data, targetHour, dayOffset) {
+  const base = dayOffset * 24;
+  let bestIdx = base;
   let bestDiff = Infinity;
-  hours.forEach((h, i) => {
+  for (let i = base; i < base + 24 && i < data.hourly.time.length; i++) {
+    const h = parseInt(data.hourly.time[i].split('T')[1].slice(0, 2));
     const diff = Math.abs(h - targetHour);
     if (diff < bestDiff) { bestDiff = diff; bestIdx = i; }
-  });
+  }
   return {
-    speed: data.hourly.wind_speed_10m[bestIdx],
+    speed:     data.hourly.wind_speed_10m[bestIdx],
     direction: data.hourly.wind_direction_10m[bestIdx],
-    hour: hours[bestIdx],
+    hour:      parseInt(data.hourly.time[bestIdx].split('T')[1].slice(0, 2)),
   };
 }
 
@@ -259,7 +288,7 @@ async function analyze() {
   btn.disabled = true;
   setStatus('📍 現在地を取得中...');
 
-  let lat, lon;
+  let lat, lon, fallback = false;
   try {
     const pos = await new Promise((resolve, reject) =>
       navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 })
@@ -267,20 +296,17 @@ async function analyze() {
     lat = pos.coords.latitude;
     lon = pos.coords.longitude;
   } catch (e) {
-    // Demo mode: use Tokyo
-    lat = 35.6895;
-    lon = 139.6917;
-    setStatus('⚠️ 位置情報取得失敗 → 東京でデモ表示');
+    lat = 35.6895; lon = 139.6917;
+    fallback = true;
   }
 
   try {
     setStatus('🌬️ 風データを取得中...');
     const depTime = document.getElementById('departure').value;
     const arrTime = document.getElementById('arrival').value;
-    const speed = parseFloat(document.getElementById('speed').value) || 20;
 
-    const depHour = timeToHour(depTime);
-    const arrHour = timeToHour(arrTime);
+    const depHour = parseInt(depTime.split(':')[0]);
+    const arrHour = parseInt(arrTime.split(':')[0]);
 
     if (arrHour <= depHour) {
       setStatus('⚠️ 帰着時刻は出発時刻より後にしてください', true);
@@ -288,56 +314,44 @@ async function analyze() {
       return;
     }
 
+    // 2日分まとめて1回で取得
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&timezone=auto&forecast_days=2`;
+    const data = await fetch(url).then(r => r.json());
+
+    const windDep = findWind(data, depHour, selectedDay);
+    const windArr = findWind(data, arrHour, selectedDay);
+
     const totalHours = arrHour - depHour;
-    const halfHours = totalHours / 2;
+    const halfHours  = totalHours / 2;
+    const dayLabel   = selectedDay === 0 ? '今日' : '明日';
 
-    const midHour = Math.floor(depHour + halfHours);
-
-    const [windDep, windArr] = await Promise.all([
-      getWindAtHour(lat, lon, Math.floor(depHour)),
-      getWindAtHour(lat, lon, Math.floor(arrHour)),
-    ]);
-
-    // Show wind info
     show('windCard');
+    const fallbackNote = fallback ? ' <span style="color:#e53e3e">（東京デモ）</span>' : '';
     document.getElementById('windInfo').innerHTML = `
-      <div class="wind-chip">出発時: 風速 ${windDep.speed.toFixed(1)} km/h / 風向 ${windDirName(windDep.direction)}</div>
-      <div class="wind-chip">帰着時: 風速 ${windArr.speed.toFixed(1)} km/h / 風向 ${windDirName(windArr.direction)}</div>
+      <div class="wind-chip">📅 ${dayLabel}</div>
+      <div class="wind-chip">出発 ${depHour}時: ${windDep.speed.toFixed(1)} km/h / ${windDirName(windDep.direction)}${fallbackNote}</div>
+      <div class="wind-chip">帰着 ${arrHour}時: ${windArr.speed.toFixed(1)} km/h / ${windDirName(windArr.direction)}</div>
     `;
 
-    // Score each direction
     const scored = DIRS.map(dir => {
-      // Outbound leg
       const outHead = headwindComponent(dir.deg, windDep.direction, windDep.speed);
-      // Return leg
       const retHead = headwindComponent((dir.deg + 180) % 360, windArr.direction, windArr.speed);
-
-      // Weighted by time (equal split assumed)
       let score = outHead * halfHours + retHead * halfHours;
-
-      // Bonus: slightly prefer headwind-out (harder first = more comfortable)
       if (outHead > 0 && retHead < 0) score -= 1.5;
-
-      const outLabel = outHead > 1 ? `向かい風 ${Math.abs(outHead).toFixed(1)}km/h相当` :
-                       outHead < -1 ? `追い風 ${Math.abs(outHead).toFixed(1)}km/h相当` : '横風';
-      const retLabel = retHead > 1 ? `向かい風 ${Math.abs(retHead).toFixed(1)}km/h相当` :
-                       retHead < -1 ? `追い風 ${Math.abs(retHead).toFixed(1)}km/h相当` : '横風';
-
+      const outLabel = outHead > 1  ? `向かい風 ${Math.abs(outHead).toFixed(1)}km/h相当`
+                     : outHead < -1 ? `追い風 ${Math.abs(outHead).toFixed(1)}km/h相当` : '横風';
+      const retLabel = retHead > 1  ? `向かい風 ${Math.abs(retHead).toFixed(1)}km/h相当`
+                     : retHead < -1 ? `追い風 ${Math.abs(retHead).toFixed(1)}km/h相当` : '横風';
       return { ...dir, score, outLabel, retLabel };
-    });
+    }).sort((a, b) => a.score - b.score);
 
-    scored.sort((a, b) => a.score - b.score);
-
-    // Normalize scores for color mapping
     const minScore = scored[0].score;
     const maxScore = scored[scored.length - 1].score;
 
     drawCompass(scored, minScore, maxScore);
     show('compassCard');
-
     renderRanking(scored, minScore, maxScore);
     show('resultCard');
-
     setStatus('');
   } catch (e) {
     setStatus('❌ データ取得エラー: ' + e.message, true);
