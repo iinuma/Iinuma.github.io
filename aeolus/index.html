@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>風向きルート提案 🚴</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif;
+      background: #f0f4f8;
+      color: #1a202c;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2d3748;
+    }
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .card h2 {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #718096;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 14px;
+    }
+    .inputs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .input-group label {
+      font-size: 0.8rem;
+      color: #718096;
+      font-weight: 500;
+    }
+    .input-group input {
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+    .input-group input:focus { border-color: #4299e1; }
+    .speed-group {
+      grid-column: span 2;
+    }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: #3182ce;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 4px;
+    }
+    .btn:hover { background: #2b6cb0; }
+    .btn:disabled { background: #a0aec0; cursor: not-allowed; }
+
+    /* Compass */
+    .compass-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 0;
+    }
+    #compass { display: block; }
+
+    /* Results list */
+    .ranking {
+      list-style: none;
+    }
+    .ranking li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f4f8;
+    }
+    .ranking li:last-child { border-bottom: none; }
+    .rank-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .rank-1 { background: #f6e05e; color: #744210; }
+    .rank-2 { background: #e2e8f0; color: #4a5568; }
+    .rank-3 { background: #ed8936; color: white; }
+    .rank-other { background: #edf2f7; color: #718096; }
+    .rank-dir {
+      font-size: 1.1rem;
+      font-weight: 700;
+      min-width: 32px;
+    }
+    .rank-detail {
+      flex: 1;
+      font-size: 0.82rem;
+      color: #718096;
+      line-height: 1.5;
+    }
+    .rank-score {
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 20px;
+    }
+    .score-good { background: #c6f6d5; color: #276749; }
+    .score-mid  { background: #fefcbf; color: #744210; }
+    .score-bad  { background: #fed7d7; color: #9b2c2c; }
+
+    .wind-info {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .wind-chip {
+      background: #ebf8ff;
+      color: #2b6cb0;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .status {
+      text-align: center;
+      color: #718096;
+      font-size: 0.9rem;
+      padding: 10px;
+    }
+    .error { color: #e53e3e; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<h1>🚴 風向きルート提案</h1>
+
+<div class="card">
+  <h2>ライド設定</h2>
+  <div class="inputs">
+    <div class="input-group">
+      <label>出発時刻</label>
+      <input type="time" id="departure" value="09:00">
+    </div>
+    <div class="input-group">
+      <label>帰着時刻</label>
+      <input type="time" id="arrival" value="12:00">
+    </div>
+    <div class="input-group speed-group">
+      <label>平均時速 (km/h)</label>
+      <input type="number" id="speed" value="20" min="5" max="60">
+    </div>
+  </div>
+  <br>
+  <button class="btn" id="analyzeBtn" onclick="analyze()">📍 現在地で分析する</button>
+  <p class="status" id="status"></p>
+</div>
+
+<div class="card hidden" id="windCard">
+  <h2>取得した風データ</h2>
+  <div class="wind-info" id="windInfo"></div>
+</div>
+
+<div class="card hidden" id="compassCard">
+  <h2>方向別スコア（緑ほど楽）</h2>
+  <div class="compass-wrap">
+    <canvas id="compass" width="280" height="280"></canvas>
+  </div>
+</div>
+
+<div class="card hidden" id="resultCard">
+  <h2>おすすめランキング</h2>
+  <ul class="ranking" id="ranking"></ul>
+</div>
+
+<script>
+const DIRS = [
+  { name: '北',   label: 'N',  deg: 0 },
+  { name: '北東', label: 'NE', deg: 45 },
+  { name: '東',   label: 'E',  deg: 90 },
+  { name: '南東', label: 'SE', deg: 135 },
+  { name: '南',   label: 'S',  deg: 180 },
+  { name: '南西', label: 'SW', deg: 225 },
+  { name: '西',   label: 'W',  deg: 270 },
+  { name: '北西', label: 'NW', deg: 315 },
+];
+
+function degToRad(d) { return d * Math.PI / 180; }
+
+// Headwind component: positive = headwind, negative = tailwind
+function headwindComponent(travelDeg, windFromDeg, windSpeed) {
+  const diff = degToRad(travelDeg - windFromDeg);
+  return windSpeed * Math.cos(diff);
+}
+
+function timeToHour(timeStr) {
+  const [h, m] = timeStr.split(':').map(Number);
+  return h + m / 60;
+}
+
+function setStatus(msg, isError = false) {
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  el.className = 'status' + (isError ? ' error' : '');
+}
+
+function show(id) { document.getElementById(id).classList.remove('hidden'); }
+
+async function getWindAtHour(lat, lon, targetHour) {
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=wind_speed_10m,wind_direction_10m&wind_speed_unit=kmh&timezone=auto&forecast_days=1`;
+  const res = await fetch(url);
+  const data = await res.json();
+  const hours = data.hourly.time.map(t => new Date(t).getHours());
+  // find closest hour
+  let bestIdx = 0;
+  let bestDiff = Infinity;
+  hours.forEach((h, i) => {
+    const diff = Math.abs(h - targetHour);
+    if (diff < bestDiff) { bestDiff = diff; bestIdx = i; }
+  });
+  return {
+    speed: data.hourly.wind_speed_10m[bestIdx],
+    direction: data.hourly.wind_direction_10m[bestIdx],
+    hour: hours[bestIdx],
+  };
+}
+
+async function analyze() {
+  const btn = document.getElementById('analyzeBtn');
+  btn.disabled = true;
+  setStatus('📍 現在地を取得中...');
+
+  let lat, lon;
+  try {
+    const pos = await new Promise((resolve, reject) =>
+      navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 })
+    );
+    lat = pos.coords.latitude;
+    lon = pos.coords.longitude;
+  } catch (e) {
+    // Demo mode: use Tokyo
+    lat = 35.6895;
+    lon = 139.6917;
+    setStatus('⚠️ 位置情報取得失敗 → 東京でデモ表示');
+  }
+
+  try {
+    setStatus('🌬️ 風データを取得中...');
+    const depTime = document.getElementById('departure').value;
+    const arrTime = document.getElementById('arrival').value;
+    const speed = parseFloat(document.getElementById('speed').value) || 20;
+
+    const depHour = timeToHour(depTime);
+    const arrHour = timeToHour(arrTime);
+
+    if (arrHour <= depHour) {
+      setStatus('⚠️ 帰着時刻は出発時刻より後にしてください', true);
+      btn.disabled = false;
+      return;
+    }
+
+    const totalHours = arrHour - depHour;
+    const halfHours = totalHours / 2;
+
+    const midHour = Math.floor(depHour + halfHours);
+
+    const [windDep, windArr] = await Promise.all([
+      getWindAtHour(lat, lon, Math.floor(depHour)),
+      getWindAtHour(lat, lon, Math.floor(arrHour)),
+    ]);
+
+    // Show wind info
+    show('windCard');
+    document.getElementById('windInfo').innerHTML = `
+      <div class="wind-chip">出発時: 風速 ${windDep.speed.toFixed(1)} km/h / 風向 ${windDirName(windDep.direction)}</div>
+      <div class="wind-chip">帰着時: 風速 ${windArr.speed.toFixed(1)} km/h / 風向 ${windDirName(windArr.direction)}</div>
+    `;
+
+    // Score each direction
+    const scored = DIRS.map(dir => {
+      // Outbound leg
+      const outHead = headwindComponent(dir.deg, windDep.direction, windDep.speed);
+      // Return leg
+      const retHead = headwindComponent((dir.deg + 180) % 360, windArr.direction, windArr.speed);
+
+      // Weighted by time (equal split assumed)
+      let score = outHead * halfHours + retHead * halfHours;
+
+      // Bonus: slightly prefer headwind-out (harder first = more comfortable)
+      if (outHead > 0 && retHead < 0) score -= 1.5;
+
+      const outLabel = outHead > 1 ? `向かい風 ${Math.abs(outHead).toFixed(1)}km/h相当` :
+                       outHead < -1 ? `追い風 ${Math.abs(outHead).toFixed(1)}km/h相当` : '横風';
+      const retLabel = retHead > 1 ? `向かい風 ${Math.abs(retHead).toFixed(1)}km/h相当` :
+                       retHead < -1 ? `追い風 ${Math.abs(retHead).toFixed(1)}km/h相当` : '横風';
+
+      return { ...dir, score, outLabel, retLabel };
+    });
+
+    scored.sort((a, b) => a.score - b.score);
+
+    // Normalize scores for color mapping
+    const minScore = scored[0].score;
+    const maxScore = scored[scored.length - 1].score;
+
+    drawCompass(scored, minScore, maxScore);
+    show('compassCard');
+
+    renderRanking(scored, minScore, maxScore);
+    show('resultCard');
+
+    setStatus('');
+  } catch (e) {
+    setStatus('❌ データ取得エラー: ' + e.message, true);
+  }
+
+  btn.disabled = false;
+}
+
+function windDirName(deg) {
+  const dirs = ['北','北北東','北東','東北東','東','東南東','南東','南南東','南','南南西','南西','西南西','西','西北西','北西','北北西'];
+  const idx = Math.round(deg / 22.5) % 16;
+  return `${dirs[idx]}(${Math.round(deg)}°)`;
+}
+
+function scoreColor(score, min, max) {
+  const range = max - min || 1;
+  const t = (score - min) / range; // 0=best, 1=worst
+  const r = Math.round(52 + t * 203);   // 52→255
+  const g = Math.round(211 - t * 141);  // 211→70
+  const b = Math.round(153 - t * 153);  // 153→0
+  return `rgb(${r},${g},${b})`;
+}
+
+function drawCompass(scored, min, max) {
+  const canvas = document.getElementById('compass');
+  const ctx = canvas.getContext('2d');
+  const cx = 140, cy = 140, r = 110, innerR = 38;
+
+  ctx.clearRect(0, 0, 280, 280);
+
+  // Draw sectors
+  scored.forEach(dir => {
+    const startAngle = degToRad(dir.deg - 22.5 - 90);
+    const endAngle   = degToRad(dir.deg + 22.5 - 90);
+    const color = scoreColor(dir.score, min, max);
+
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r, startAngle, endAngle);
+    ctx.closePath();
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.strokeStyle = 'white';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Label
+    const labelR = r * 0.72;
+    const lx = cx + labelR * Math.cos(degToRad(dir.deg - 90));
+    const ly = cy + labelR * Math.sin(degToRad(dir.deg - 90));
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 13px -apple-system, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(dir.label, lx, ly);
+  });
+
+  // Center circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, innerR, 0, Math.PI * 2);
+  ctx.fillStyle = 'white';
+  ctx.fill();
+
+  ctx.fillStyle = '#4a5568';
+  ctx.font = 'bold 14px -apple-system, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('🚴', cx, cy);
+}
+
+function renderRanking(scored, min, max) {
+  const ul = document.getElementById('ranking');
+  ul.innerHTML = '';
+  const range = max - min || 1;
+
+  scored.forEach((dir, i) => {
+    const t = (dir.score - min) / range;
+    const scoreClass = t < 0.33 ? 'score-good' : t < 0.66 ? 'score-mid' : 'score-bad';
+    const badgeClass = i === 0 ? 'rank-1' : i === 1 ? 'rank-2' : i === 2 ? 'rank-3' : 'rank-other';
+    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i+1}`;
+    const scoreLabel = t < 0.33 ? '楽' : t < 0.66 ? '普通' : 'しんどい';
+
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <div class="rank-badge ${badgeClass}">${medal}</div>
+      <div class="rank-dir">${dir.name}</div>
+      <div class="rank-detail">
+        行き: ${dir.outLabel}<br>
+        帰り: ${dir.retLabel}
+      </div>
+      <span class="rank-score ${scoreClass}">${scoreLabel}</span>
+    `;
+    ul.appendChild(li);
+  });
+}
+</script>
+</body>
+</html>
