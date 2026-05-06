@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZaikoApp001 — インストール手順</title>
+  <style>
+    :root {
+      --bg: #f7f5f0;
+      --card: #ffffff;
+      --accent: #2d6a4f;
+      --accent-light: #e8f5ee;
+      --text: #1a1a1a;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+      --step-num: #2d6a4f;
+      --arrow: #9ca3af;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+      min-height: 100vh;
+      padding: 48px 16px 80px;
+    }
+
+    .container { max-width: 540px; margin: 0 auto; }
+
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+      animation: fadeDown 0.6s ease both;
+    }
+
+    .app-icon {
+      font-size: 64px;
+      line-height: 1;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.08));
+    }
+
+    .app-name { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+
+    .app-subtitle {
+      margin-top: 6px;
+      font-size: 14px;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+
+    .steps { display: flex; flex-direction: column; gap: 0; }
+
+    .step {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06), 0 0 0 1px var(--border);
+      animation: fadeUp 0.5s ease both;
+    }
+
+    .step:nth-child(1) { animation-delay: 0.10s; }
+    .step:nth-child(3) { animation-delay: 0.18s; }
+    .step:nth-child(5) { animation-delay: 0.26s; }
+    .step:nth-child(7) { animation-delay: 0.34s; }
+
+    .step-header { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+
+    .step-num {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: #fff;
+      font-size: 15px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .step-title { font-size: 17px; font-weight: 700; }
+
+    .step-body {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.75;
+      padding-left: 46px;
+    }
+
+    .mock-app {
+      display: flex; align-items: center; gap: 12px;
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px 16px;
+      margin-top: 12px;
+    }
+
+    .mock-app-icon { font-size: 36px; line-height: 1; }
+    .mock-app-info { flex: 1; }
+    .mock-app-name { font-size: 14px; font-weight: 600; }
+    .mock-app-sub { font-size: 12px; color: var(--text-muted); }
+
+    .mock-btn {
+      background: #007aff; color: #fff;
+      font-size: 13px; font-weight: 600;
+      border: none; border-radius: 20px;
+      padding: 6px 16px; cursor: default;
+    }
+
+    .mock-btn.green { background: var(--accent); }
+
+    .mock-install {
+      display: flex; align-items: center; gap: 12px;
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-top: 12px;
+    }
+
+    .mock-install-icon { font-size: 36px; }
+    .mock-install-info { flex: 1; }
+    .mock-install-name { font-size: 14px; font-weight: 600; }
+    .mock-install-ver { font-size: 12px; color: var(--text-muted); }
+
+    .mock-badge {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: var(--accent-light);
+      border: 1px solid #b7dfc9;
+      border-radius: 12px;
+      padding: 10px 16px;
+      margin-top: 12px;
+      font-size: 14px; color: var(--accent); font-weight: 600;
+    }
+
+    .mock-badge .badge-icon { font-size: 22px; }
+
+    .arrow-divider {
+      text-align: center;
+      font-size: 22px;
+      color: var(--arrow);
+      padding: 8px 0;
+      line-height: 1;
+      animation: fadeUp 0.4s ease both;
+    }
+
+    .arrow-divider:nth-child(2) { animation-delay: 0.14s; }
+    .arrow-divider:nth-child(4) { animation-delay: 0.22s; }
+    .arrow-divider:nth-child(6) { animation-delay: 0.30s; }
+
+    a.tf-link {
+      display: inline-block;
+      margin-top: 12px;
+      background: var(--accent);
+      color: #fff;
+      font-size: 14px; font-weight: 600;
+      border-radius: 10px;
+      padding: 10px 20px;
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+
+    a.tf-link:hover { background: #1b4332; }
+
+    .note {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13px; color: #92400e;
+      line-height: 1.6;
+      margin-top: 12px;
+    }
+
+    /* テスト内容セクション */
+    .test-list {
+      margin-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .test-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #f9fafb;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 14px;
+    }
+
+    .test-icon { font-size: 18px; flex-shrink: 0; }
+
+    .completion {
+      background: linear-gradient(135deg, var(--accent) 0%, #40916c 100%);
+      border-radius: 16px;
+      padding: 28px 24px;
+      text-align: center;
+      color: #fff;
+      animation: fadeUp 0.5s ease 0.38s both;
+    }
+
+    .completion-icon { font-size: 48px; margin-bottom: 12px; }
+    .completion-title { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+    .completion-text { font-size: 14px; opacity: 0.85; line-height: 1.6; }
+
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="header">
+      <div class="app-icon">📦</div>
+      <div class="app-name">ZaikoApp001</div>
+      <div class="app-subtitle">インストール手順（TestFlight経由）</div>
+    </div>
+
+    <div class="steps">
+
+      <!-- Step 1 -->
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <div class="step-title">TestFlight アプリを入手する</div>
+        </div>
+        <div class="step-body">
+          App Store で「TestFlight」を検索してインストールしてください。無料です。
+          <div class="mock-app">
+            <div class="mock-app-icon">✈️</div>
+            <div class="mock-app-info">
+              <div class="mock-app-name">TestFlight</div>
+              <div class="mock-app-sub">Apple • 無料</div>
+            </div>
+            <button class="mock-btn">入手</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow-divider">↓</div>
+
+      <!-- Step 2 -->
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <div class="step-title">招待リンクを開く</div>
+        </div>
+        <div class="step-body">
+          下のボタンをタップして TestFlight の参加ページを開いてください。<br>
+          TestFlight アプリが自動的に起動します。
+          <br>
+          <a class="tf-link" href="https://testflight.apple.com/join/t18yzZtd">
+            ✈️　ZaikoApp001 のテストに参加する
+          </a>
+          <div class="note">
+            ⚠️ このリンクはiOS端末でタップしてください。<br>
+            TestFlight がインストール済みでないと正しく開けない場合があります。
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow-divider">↓</div>
+
+      <!-- Step 3 -->
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num">3</div>
+          <div class="step-title">「インストール」をタップ</div>
+        </div>
+        <div class="step-body">
+          TestFlight 内のインストール画面が表示されます。<br>
+          「インストール」ボタンを押してください。
+          <div class="mock-install">
+            <div class="mock-install-icon">📦</div>
+            <div class="mock-install-info">
+              <div class="mock-install-name">ZaikoApp001</div>
+              <div class="mock-install-ver">バージョン 1.0</div>
+            </div>
+            <button class="mock-btn green">インストール</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow-divider">↓</div>
+
+      <!-- Step 4 -->
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num">4</div>
+          <div class="step-title">カメラのアクセスを許可する</div>
+        </div>
+        <div class="step-body">
+          初回起動時にカメラのアクセス許可を求めるダイアログが表示されます。<br>
+          「OK」をタップしてください。商品の写真撮影に使用します。
+          <div class="mock-badge">
+            <span class="badge-icon">📷</span>
+            「ZaikoApp001」がカメラへのアクセスを求めています
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow-divider">↓</div>
+
+      <!-- Step 5 -->
+      <div class="step">
+        <div class="step-header">
+          <div class="step-num">5</div>
+          <div class="step-title">商品を登録して試してみる</div>
+        </div>
+        <div class="step-body">
+          インストール後、以下の操作をひととおり試してください。
+          <div class="test-list">
+            <div class="test-item">
+              <span class="test-icon">＋</span>
+              <span>右上の「＋」ボタンで商品を新規登録する</span>
+            </div>
+            <div class="test-item">
+              <span class="test-icon">📷</span>
+              <span>商品の写真をカメラで撮影して保存する</span>
+            </div>
+            <div class="test-item">
+              <span class="test-icon">📍</span>
+              <span>保管場所（棚・袋番号）を設定する</span>
+            </div>
+            <div class="test-item">
+              <span class="test-icon">🏷️</span>
+              <span>ステータスを選択する</span>
+            </div>
+            <div class="test-item">
+              <span class="test-icon">📤</span>
+              <span>一覧画面の共有ボタンからCSVをエクスポートする</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="arrow-divider">↓</div>
+
+      <!-- Completion -->
+      <div class="completion">
+        <div class="completion-icon">🎉</div>
+        <div class="completion-title">インストール完了！</div>
+        <div class="completion-text">
+          ホーム画面に「ZaikoApp001」が表示されます。<br>
+          タップして起動し、商品の入力から試してみてください。<br><br>
+          お気づきの点・不具合は TestFlight の<br>フィードバック機能からご報告ください。
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
