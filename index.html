@@ -115,6 +115,18 @@ ul.pts li::before{content:"";position:absolute;left:0;top:.75em;width:6px;height
 .links a:hover{text-decoration:underline}
 .links a::after{content:"↗";font-size:10px;opacity:.65}
 
+/* ---------- figures ---------- */
+figure{margin:22px 0 0}
+figure img{
+  display:block;width:100%;height:auto;border-radius:10px;
+  border:1px solid var(--line);background:var(--surface-2);
+}
+figure a{display:block;text-decoration:none}
+figcaption{font-size:12.5px;color:var(--text-3);margin-top:9px;line-height:1.6}
+figcaption .zoom{color:var(--accent);font-weight:700}
+.fig-wide{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.fig-wide img{min-width:640px}
+
 /* ---------- video ---------- */
 .vids{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:20px}
 .vid{position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:var(--surface-2);border:1px solid var(--line)}
@@ -347,6 +359,26 @@ footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);font-si
         スマホアプリで描いたイラストをその場でリアルタイムに投影できます。
         設置型の新しい広告媒体・アート表現としての活用を提案しています。
       </p>
+
+      <figure>
+        <img src="images/laser-artwork.jpg" loading="lazy" width="1000" height="1000"
+             alt="レーザーで描画した作品9点。だるま、花、クリスマスツリー、ハート、地球、バラ、猫、非常口のピクトグラム、サインの線画。">
+        <figcaption>実際に描画したもの。一筆書きの経路をどう組むかで、線の重なりと見え方が変わる。</figcaption>
+      </figure>
+
+      <figure>
+        <div class="fig-wide">
+          <a href="makerfaire/images/BeamTrace01.png" target="_blank" rel="noopener">
+            <img src="images/beamtrace.jpg" loading="lazy" width="1200" height="659"
+                 alt="BeamTrace アプリの画面構成図。手書きエリア、操作ボタン、走査座標の JSON 表示エリアの3部構成。">
+          </a>
+        </div>
+        <figcaption>
+          BeamTrace — iPad で描いた線を座標データ（JSON）に変換し、そのままレーザーの走査制御に渡している。
+          <span class="zoom">画像をクリックで拡大</span>
+        </figcaption>
+      </figure>
+
       <div class="vids">
         <div class="vid"><iframe src="https://www.youtube.com/embed/pHyrT2Ik5Uo" allowfullscreen title="レーザーガルバノ装置 デモ 1"></iframe></div>
         <div class="vid"><iframe src="https://www.youtube.com/embed/jBVQ-rWKrIc" allowfullscreen title="レーザーガルバノ装置 デモ 2"></iframe></div>
