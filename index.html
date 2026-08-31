@@ -1,165 +1,450 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>空間に描くレーザーお絵描き</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iinuma — つくったもの</title>
+<meta name="description" content="iOS アプリ・ヘルスケアシステム・レーザー装置。企画から実装・リリースまで個人で制作しています。">
+<meta property="og:title" content="iinuma — つくったもの">
+<meta property="og:description" content="iOS アプリ・ヘルスケアシステム・レーザー装置。企画から実装・リリースまで個人で制作しています。">
+<meta property="og:type" content="website">
+<style>
+:root{
+  --bg:#ffffff; --surface:#fbfaf8; --surface-2:#f3f1ed;
+  --text:#191713; --text-2:#57524a; --text-3:#8d8679;
+  --line:#e6e2db; --line-2:#d2ccc2;
+  --accent:#0f6b57; --accent-2:#0b4d3e; --accent-soft:#e8f4f0;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#131210; --surface:#1c1a17; --surface-2:#252220;
+    --text:#f2efe9; --text-2:#b6b0a4; --text-3:#87806f;
+    --line:#302d28; --line-2:#454038;
+    --accent:#57cbab; --accent-2:#7fdcc0; --accent-soft:#132b25;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,sans-serif;
+  line-height:1.8; font-size:15.5px; -webkit-font-smoothing:antialiased;
+}
+a{color:inherit}
+.wrap{max-width:880px;margin:0 auto;padding:0 24px 120px}
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Hiragino Kino Gothic ProN", Meiryo, sans-serif;
-      background-color: #fff;
-      color: #37352f;
-      line-height: 1.75;
-    }
+/* ---------- hero ---------- */
+header{padding:96px 0 0}
+.hi{font-size:12px;font-weight:800;letter-spacing:.2em;color:var(--accent);text-transform:uppercase;margin-bottom:22px}
+h1{font-size:clamp(2.1rem,6vw,3.2rem);font-weight:800;line-height:1.22;letter-spacing:-.025em}
+.tagline{margin-top:26px;font-size:17px;color:var(--text-2);max-width:64ch}
+.tagline strong{color:var(--text);font-weight:700}
 
-    .page-wrapper {
-      max-width: 720px;
-      margin: 0 auto;
-      padding: 96px 96px 200px;
-    }
+.hero-meta{
+  display:flex;flex-wrap:wrap;gap:8px;margin-top:32px;
+}
+.chip{
+  font-size:12.5px;font-weight:600;color:var(--text-2);
+  background:var(--surface-2);border:1px solid var(--line);
+  border-radius:100px;padding:5px 14px;
+}
 
-    h1.page-title {
-      font-size: 2.5rem;
-      font-weight: 700;
-      margin-bottom: 16px;
-      line-height: 1.3;
-    }
+/* ---------- nav ---------- */
+nav{
+  display:flex;flex-wrap:wrap;gap:22px;margin-top:44px;
+  padding-top:22px;border-top:1px solid var(--line);
+}
+nav a{
+  font-size:13.5px;font-weight:700;color:var(--text-3);text-decoration:none;
+  letter-spacing:.02em;transition:color .15s;
+}
+nav a:hover{color:var(--accent)}
 
-    .event-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: #f7f6f3;
-      border: 1px solid #e0ddd8;
-      border-radius: 6px;
-      padding: 8px 14px;
-      margin-bottom: 40px;
-      font-size: 0.875rem;
-      color: #37352f;
-      text-decoration: none;
-      transition: background 0.15s;
-    }
+/* ---------- sections ---------- */
+section{margin-top:88px;scroll-margin-top:24px}
+.sh{display:flex;align-items:baseline;gap:14px;margin-bottom:10px}
+.sh h2{font-size:1.55rem;font-weight:800;letter-spacing:-.015em}
+.sh .cnt{font-size:12px;font-weight:700;color:var(--text-3);letter-spacing:.06em}
+.sd{font-size:14px;color:var(--text-3);max-width:64ch;margin-bottom:30px}
 
-    .event-link:hover {
-      background: #eeecea;
-    }
+/* ---------- hero project ---------- */
+.lead-card{
+  border:1px solid var(--line);border-radius:14px;overflow:hidden;
+  background:var(--surface);margin-bottom:18px;
+}
+.lead-card .body{padding:28px 28px 24px}
+.lead-card h3{font-size:1.35rem;font-weight:800;letter-spacing:-.015em;margin-bottom:4px}
+.lead-card .kicker{font-size:13px;color:var(--text-3);margin-bottom:16px}
+.lead-card p{font-size:14.5px;color:var(--text-2)}
 
-    .event-link .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #f0b429;
-      flex-shrink: 0;
-    }
+/* ---------- grid ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(272px,1fr));gap:16px}
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;
+  padding:22px 22px 20px;display:flex;flex-direction:column;
+  transition:border-color .16s, transform .16s;
+}
+.card:hover{border-color:var(--line-2);transform:translateY(-2px)}
+.card h3{font-size:1.08rem;font-weight:700;letter-spacing:-.01em;margin-bottom:3px}
+.card .kicker{font-size:12.5px;color:var(--text-3);margin-bottom:12px}
+.card p{font-size:13.5px;color:var(--text-2);line-height:1.76}
+ul.pts{list-style:none;margin-top:12px}
+ul.pts li{font-size:13px;color:var(--text-2);padding-left:16px;position:relative;margin-bottom:5px;line-height:1.7}
+ul.pts li::before{content:"";position:absolute;left:0;top:.75em;width:6px;height:1.5px;background:var(--line-2)}
 
-    h2 {
-      font-size: 1.25rem;
-      font-weight: 700;
-      margin-top: 40px;
-      margin-bottom: 12px;
-      line-height: 1.4;
-    }
+.badge{
+  display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.09em;
+  text-transform:uppercase;border-radius:4px;padding:3px 8px;margin-bottom:12px;
+  border:1px solid currentColor;
+}
+.b-live{color:var(--accent)}
+.b-beta{color:#2f6ea8}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .b-beta{color:#7fb3e6}}
+.b-made{color:var(--text-3)}
 
-    p {
-      margin-bottom: 8px;
-      font-size: 1rem;
-    }
+.tech{margin-top:auto;padding-top:16px;display:flex;flex-wrap:wrap;gap:5px}
+.tech span{
+  font-size:11px;font-weight:600;color:var(--text-3);
+  background:var(--surface-2);border:1px solid var(--line);border-radius:4px;padding:2px 8px;
+}
+.links{display:flex;flex-wrap:wrap;gap:14px;margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.links a{
+  font-size:12.5px;font-weight:700;color:var(--accent);text-decoration:none;
+  display:inline-flex;align-items:center;gap:5px;
+}
+.links a:hover{text-decoration:underline}
+.links a::after{content:"↗";font-size:10px;opacity:.65}
 
-    ul {
-      padding-left: 1.5em;
-      margin-bottom: 8px;
-    }
+/* ---------- video ---------- */
+.vids{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:20px}
+.vid{position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:var(--surface-2);border:1px solid var(--line)}
+.vid iframe{position:absolute;inset:0;width:100%;height:100%;border:none}
 
-    ul li {
-      margin-bottom: 4px;
-      font-size: 1rem;
-    }
+/* ---------- misc list ---------- */
+.mini{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));
+  gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden;
+}
+.mini div{background:var(--surface);padding:16px 18px}
+.mini b{display:block;font-size:14px;font-weight:700;margin-bottom:2px}
+.mini span{font-size:12.5px;color:var(--text-3);line-height:1.65}
 
-    .page-image {
-      width: 100%;
-      border-radius: 4px;
-      margin-bottom: 16px;
-      display: block;
-    }
+/* ---------- table ---------- */
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:13.5px;min-width:480px}
+th{text-align:left;font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;
+   color:var(--text-3);background:var(--surface-2);padding:12px 18px;border-bottom:1px solid var(--line)}
+td{padding:12px 18px;border-bottom:1px solid var(--line);color:var(--text-2);vertical-align:top}
+tr:last-child td{border-bottom:none}
+td strong{color:var(--text);font-weight:700;white-space:nowrap}
 
-    .video-wrapper {
-      position: relative;
-      width: 100%;
-      aspect-ratio: 16/9;
-      margin-bottom: 16px;
-      border-radius: 4px;
-      overflow: hidden;
-    }
+/* ---------- approach ---------- */
+.appr{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px}
+.appr div{border-left:2px solid var(--accent);padding-left:18px}
+.appr b{display:block;font-size:14.5px;font-weight:700;margin-bottom:5px}
+.appr p{font-size:13.5px;color:var(--text-2)}
 
-    .video-wrapper iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
+/* ---------- contact ---------- */
+.contact{
+  margin-top:88px;background:var(--accent-soft);border:1px solid var(--line);
+  border-radius:14px;padding:34px 30px;
+}
+.contact h2{font-size:1.3rem;font-weight:800;margin-bottom:10px}
+.contact p{font-size:14.5px;color:var(--text-2);max-width:58ch}
+.contact a.mail{
+  display:inline-block;margin-top:20px;font-size:15px;font-weight:800;
+  color:var(--accent);text-decoration:none;border-bottom:2px solid currentColor;padding-bottom:2px;
+}
+footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);font-size:12px;color:var(--text-3)}
 
-    .section {
-      margin-bottom: 8px;
-    }
-
-    @media (max-width: 768px) {
-      .page-wrapper {
-        padding: 48px 24px 100px;
-      }
-
-      h1.page-title {
-        font-size: 1.75rem;
-      }
-    }
-  </style>
+@media(max-width:640px){
+  .wrap{padding:0 18px 80px}
+  header{padding-top:56px}
+  section{margin-top:64px}
+  nav{gap:16px}
+}
+</style>
 </head>
 <body>
-  <div class="page-wrapper">
-    <h1 class="page-title">空間に描くレーザーお絵描き</h1>
+<div class="wrap">
 
-    <a class="event-link" href="/makerfaire/">
-      <span class="dot"></span>
-      Maker Faire Tokyo 2026 出展申し込み中
-    </a>
+<header>
+  <div class="hi">Masahiro Iinuma</div>
+  <h1>思いついたものを、<br>出せるところまで作る。</h1>
+  <p class="tagline">
+    iOS アプリ、ヘルスケアのデータ基盤、レーザー描画装置。
+    <strong>企画・設計・実装から App Store 審査・サポートページ運用まで、ひととおり自分でやっています。</strong>
+    動くところで止めず、人が使える状態にするまでを一区切りにしています。
+  </p>
+  <div class="hero-meta">
+    <span class="chip">iOS / SwiftUI</span>
+    <span class="chip">HealthKit</span>
+    <span class="chip">AWS · Azure · Firebase</span>
+    <span class="chip">AI / LLM</span>
+    <span class="chip">ESP32 · 電子工作</span>
+  </div>
+  <nav>
+    <a href="#apps">iOS アプリ</a>
+    <a href="#health">ヘルスケア基盤</a>
+    <a href="#hardware">ハードウェア</a>
+    <a href="#how">つくり方</a>
+    <a href="#contact">連絡先</a>
+  </nav>
+</header>
 
-    <div class="section">
-      <h2>■ レーザーガルバノ装置</h2>
-      <img class="page-image" src="images/laser-galvano.png" alt="レーザーガルバノ装置">
-      <p>2つのミラーを高速に動かし、レーザーで線画を描画する装置です。</p>
-      <ul>
-        <li>空間に広告・文字・図形を描画</li>
-        <li>短時間（約1分）でインパクトのある表示</li>
-        <li>設置型の新しい広告媒体として活用可能</li>
-        <li>スマホアプリで描いたものも即表示！</li>
+<!-- ================= APPS ================= -->
+<section id="apps">
+  <div class="sh"><h2>iOS アプリ</h2><span class="cnt">RELEASED / TESTFLIGHT</span></div>
+  <p class="sd">App Store で公開中のもの、TestFlight で配布中のもの。サポートページとプライバシーポリシーも自分で用意して運用しています。</p>
+
+  <div class="lead-card">
+    <div class="body">
+      <span class="badge b-live">App Store 公開中</span>
+      <h3>AtriumVita</h3>
+      <div class="kicker">Dynamic Island × HealthKit — 身体データの「変化」に気づくためのアプリ</div>
+      <p>
+        健康データは、見ようと思わないと見ません。かといって通知にすると強すぎる。
+        その中間として Dynamic Island に <b>ひとつの数値だけ</b>を出し続けるアプリです。
+        意味づけはせず、数値と矢印だけを出して、解釈はそのまま持ち主に委ねています。
+      </p>
+      <ul class="pts">
+        <li>心拍・HRV・SpO2・歩数を HealthKit から取得し、常に 1 指標だけを表示</li>
+        <li>変化が起きた指標が数秒だけ割り込み、また元に戻る優先度ロジック</li>
+        <li>秒まで出る時計モード。バッテリー残量と Wi-Fi / セルラーも同時表示</li>
+        <li>v1.5 まで継続的にアップデート。iOS 側の制約は仕様として明文化</li>
       </ul>
-    </div>
-
-    <div class="section">
-      <h2>■ デモ動画</h2>
-      <div class="video-wrapper">
-        <iframe src="https://www.youtube.com/embed/pHyrT2Ik5Uo" allowfullscreen></iframe>
+      <div class="tech"><span>SwiftUI</span><span>ActivityKit</span><span>HealthKit</span><span>WidgetKit</span><span>BGTaskScheduler</span></div>
+      <div class="links">
+        <a href="/atriumvita/">サポートページ</a>
       </div>
-      <div class="video-wrapper">
-        <iframe src="https://www.youtube.com/embed/jBVQ-rWKrIc" allowfullscreen></iframe>
-      </div>
-    </div>
-
-    <div class="section">
-      <h2>■ 技術仕様</h2>
-      <ul>
-        <li><strong>レーザー色</strong>：グリーンレーザー</li>
-        <li><strong>制御マイコン</strong>：ESP32</li>
-        <li><strong>走査方式</strong>：2軸ガルバノミラーをESP32で制御し、線画を描画</li>
-      </ul>
     </div>
   </div>
+
+  <div class="grid">
+    <div class="card">
+      <span class="badge b-live">App Store 公開中</span>
+      <h3>AquaTide</h3>
+      <div class="kicker">iPhone / Apple Watch</div>
+      <p>iPhone と Apple Watch の両対応アプリ。App Store Connect 連携、サポート・プライバシーポリシーのページまで含めて公開・運用しています。</p>
+      <div class="tech"><span>SwiftUI</span><span>watchOS</span></div>
+      <div class="links">
+        <a href="https://apps.apple.com/us/app/aquatide/id6761738336">App Store</a>
+        <a href="/aquatide/">サポート</a>
+        <a href="/aquatide/privacy.html">プライバシー</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="badge b-beta">TestFlight 配布中</span>
+      <h3>Aeolus</h3>
+      <div class="kicker">風向きルート提案</div>
+      <p>自転車で走るとき、行きは向かい風・帰りは追い風になるルートを提案するアプリ。当日と翌日の風予報を取得して比較できます。</p>
+      <div class="tech"><span>SwiftUI</span><span>MapKit</span><span>気象 API</span></div>
+      <div class="links">
+        <a href="/aeolus/">紹介ページ</a>
+        <a href="/aeolus/howto.html">インストール手順</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="badge b-beta">TestFlight 配布中</span>
+      <h3>ZaikoSnap</h3>
+      <div class="kicker">写真で在庫を記録する</div>
+      <p>買い物・在庫管理を、入力ではなく写真で済ませるためのアプリ。インストール手順ページを用意して配布しています。</p>
+      <div class="tech"><span>SwiftUI</span><span>カメラ</span></div>
+      <div class="links">
+        <a href="https://testflight.apple.com/join/ke4TDRqm">TestFlight で試す</a>
+        <a href="/zaiko-snap/howto.html">インストール手順</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <span class="badge b-beta">TestFlight 配布中</span>
+      <h3>ZaikoApp001</h3>
+      <div class="kicker">在庫・買い物管理</div>
+      <p>在庫管理アプリの別アプローチ版。同じ課題に対して構成を変えて作り直したものです。</p>
+      <div class="tech"><span>SwiftUI</span></div>
+      <div class="links">
+        <a href="https://testflight.apple.com/join/t18yzZtd">TestFlight で試す</a>
+        <a href="/zaikoapp001/howto.html">インストール手順</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HEALTH ================= -->
+<section id="health">
+  <div class="sh"><h2>ヘルスケアのデータ基盤</h2><span class="cnt">RUNNING</span></div>
+  <p class="sd">Apple Watch から取れる生体データを、家族や医療の現場で「見られる形」にするための仕組みです。</p>
+
+  <div class="lead-card">
+    <div class="body">
+      <span class="badge b-live">稼働中</span>
+      <h3>見守りシステム（大学研究室との共同利用）</h3>
+      <div class="kicker">Apple Watch → HealthKit → iPhone → Firestore → Web ダッシュボード</div>
+      <p>
+        訪問医療・家族見守りを想定した、健康データの収集・閲覧システム。
+        iOS アプリで HealthKit のデータを集め、Firestore に送り、Web の管理ダッシュボードでリアルタイムに閲覧します。
+        実機での動作確認とダッシュボードの公開運用まで完了しています。
+      </p>
+      <ul class="pts">
+        <li>安静時心拍 / 時系列心拍 / HRV(SDNN) / 歩数 / 消費カロリー / 呼吸数と呼吸変動 / 手首皮膚温Δ / 睡眠ステージを収集</li>
+        <li>睡眠スコアと自律神経指標は、断定ではなく「変化の参考値」として独自に算出</li>
+        <li>HealthKit と Oura API の指標差（HRV の SDNN と RMSSD の違いなど）を公式仕様に当たって比較検証し、根拠つきで文書化</li>
+        <li>利用者は匿名で管理し、識別名だけを運用で持つ設計</li>
+      </ul>
+      <div class="tech"><span>SwiftUI</span><span>HealthKit</span><span>Firebase Firestore</span><span>Firebase Hosting</span><span>Oura API</span></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <span class="badge b-beta">開発・運用中</span>
+      <h3>Musubu / Amane</h3>
+      <div class="kicker">家族見守り・体調の可視化</div>
+      <p>
+        体調を数値ではなく「状態」として見せるアプリ。円の満ち具合で表示し、離れて暮らす家族が
+        「大丈夫そうか」だけを一目で分かるようにしています。
+      </p>
+      <ul class="pts">
+        <li>本人用と家族用（Viewer）を同じアプリで切り替える構成</li>
+        <li>医療アプリにしないための表現設計 — 診断・検知ではなく状態・傾向・参考に統一</li>
+        <li>Sign in with Apple、プライバシーポリシー整備済み</li>
+      </ul>
+      <div class="tech"><span>SwiftUI</span><span>HealthKit</span><span>Firebase</span><span>Sign in with Apple</span></div>
+    </div>
+
+    <div class="card">
+      <span class="badge b-made">制作物</span>
+      <h3>その他の iOS プロジェクト</h3>
+      <div class="kicker">手元で動いているもの</div>
+      <p>いずれも仕様を書いたうえで実装し、実機で動作するところまで作っています。</p>
+      <ul class="pts">
+        <li>CommuteCountdown — 通勤の乗り換えカウントダウン</li>
+        <li>はかる — 採寸表アプリ</li>
+        <li>RadiusMap — ジオフェンス確認用の地図</li>
+        <li>Gym Pose Overlay — フォーム確認用のポーズ重ね表示</li>
+        <li>ScreenshotStitcher — スクリーンショットの自動連結</li>
+        <li>GIF エディタ — アニメーション GIF の編集</li>
+      </ul>
+      <div class="tech"><span>SwiftUI</span><span>MapKit</span><span>Vision</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HARDWARE ================= -->
+<section id="hardware">
+  <div class="sh"><h2>ハードウェア</h2><span class="cnt">MAKER</span></div>
+  <p class="sd">画面の中だけでなく、実際に物として動くものも作っています。</p>
+
+  <div class="lead-card">
+    <div class="body">
+      <span class="badge b-live">Maker Faire Tokyo 2026 出展予定 · 特許申請中</span>
+      <h3>空間に描くレーザーお絵描き</h3>
+      <div class="kicker">レーザーガルバノ描画装置 + BeamTrace（iOS アプリ）</div>
+      <p>
+        ESP32 で 2 軸のガルバノミラーを高速に振り、グリーンレーザーで空間に線画を描く装置です。
+        スマホアプリで描いたイラストをその場でリアルタイムに投影できます。
+        設置型の新しい広告媒体・アート表現としての活用を提案しています。
+      </p>
+      <div class="vids">
+        <div class="vid"><iframe src="https://www.youtube.com/embed/pHyrT2Ik5Uo" allowfullscreen title="レーザーガルバノ装置 デモ 1"></iframe></div>
+        <div class="vid"><iframe src="https://www.youtube.com/embed/jBVQ-rWKrIc" allowfullscreen title="レーザーガルバノ装置 デモ 2"></iframe></div>
+      </div>
+      <div class="tech"><span>ESP32</span><span>ガルバノミラー</span><span>グリーンレーザー</span><span>iOS 連携</span></div>
+      <div class="links"><a href="/makerfaire/">出展ページを見る</a></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <span class="badge b-made">試作</span>
+      <h3>サーマルアレイ・モニター</h3>
+      <div class="kicker">AMG8833 赤外線アレイセンサー</div>
+      <p>8×8 の赤外線アレイセンサーで温度分布を取り、離れた場所から「熱の様子」を見るための装置。用途を変えて 2 種類作りました。</p>
+      <ul class="pts">
+        <li>防火モニター — 温度の異常な上がり方を検知する</li>
+        <li>料理温度モニター — 調理中の面の温度分布を見る</li>
+      </ul>
+      <div class="tech"><span>ESP32</span><span>AMG8833</span><span>温度分布可視化</span></div>
+    </div>
+
+    <div class="card">
+      <span class="badge b-made">試作</span>
+      <h3>AI カラス検知</h3>
+      <div class="kicker">画像認識 + 通知</div>
+      <p>カメラ映像からカラスを検知して通知する仕組み。農地や施設まわりの被害対策を想定した小規模構成です。</p>
+      <div class="tech"><span>画像認識</span><span>通知連携</span></div>
+    </div>
+
+    <div class="card">
+      <span class="badge b-made">試作</span>
+      <h3>電池駆動デバイスの設計</h3>
+      <div class="kicker">実測ベースのノウハウ</div>
+      <p>自作デバイスを電池で動かすときの勘所を、データシートではなく実測で詰めています。</p>
+      <ul class="pts">
+        <li>実際の下限は保護回路ではなく LDO のドロップアウトで決まる</li>
+        <li>寿命を決めるのは稼働電流ではなく待機電流</li>
+        <li>精度が 4 段階しかないなら、残量表示も 4 段階にする</li>
+      </ul>
+      <div class="tech"><span>ESP32</span><span>電源設計</span><span>ADC</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW ================= -->
+<section id="how">
+  <div class="sh"><h2>つくり方</h2></div>
+  <p class="sd">作るものより、進め方のほうが一貫しているかもしれません。</p>
+  <div class="appr">
+    <div>
+      <b>先に仕様を書く</b>
+      <p>着手する前に仕様書を書き切ります。書けないものは、だいたいまだ分かっていないものです。</p>
+    </div>
+    <div>
+      <b>できないことを書く</b>
+      <p>「iOS の仕様上ここは回避できない」といった制約と既知の不具合を、仕様書に明記します。次に触る人が同じ壁で消耗しないように。</p>
+    </div>
+    <div>
+      <b>出し切るまでやる</b>
+      <p>動いたところで止めません。審査提出、プライバシーポリシー、サポートページまで含めて一区切りとしています。</p>
+    </div>
+    <div>
+      <b>AI と組んで作る</b>
+      <p>設計と判断は自分で持ち、実装は AI コーディングエージェントと進めます。だから仕様書の質がそのまま成果物の質になります。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TECH ================= -->
+<section id="tech">
+  <div class="sh"><h2>使っている技術</h2></div>
+  <div class="tw">
+    <table>
+      <thead><tr><th>領域</th><th>内容</th></tr></thead>
+      <tbody>
+        <tr><td><strong>モバイル</strong></td><td>Swift / SwiftUI、watchOS、HealthKit、ActivityKit（Dynamic Island）、WidgetKit、MapKit、App Store 審査・運用</td></tr>
+        <tr><td><strong>クラウド</strong></td><td>AWS（Lambda / DynamoDB / API Gateway / S3 + CloudFront / Bedrock / CDK）、Azure（OpenAI / AI Search / Functions）、Firebase</td></tr>
+        <tr><td><strong>AI / LLM</strong></td><td>RAG（チャンク設計・ハイブリッド検索・出典付与）、ローカル LLM、AI コーディングエージェントを前提とした開発フロー</td></tr>
+        <tr><td><strong>組込み</strong></td><td>ESP32、ガルバノミラー制御、AMG8833 サーマルアレイ、BLE、電池駆動設計</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="contact" id="contact">
+  <h2>連絡先</h2>
+  <p>
+    アプリの不具合報告・ご感想、レーザー装置の展示や活用のご相談、その他おしごとのお話など、
+    お気軽にご連絡ください。
+  </p>
+  <a class="mail" href="mailto:async.sync@gmail.com">async.sync@gmail.com</a>
+</div>
+
+<footer>
+  © 2026 Masahiro Iinuma
+</footer>
+
+</div>
 </body>
 </html>
