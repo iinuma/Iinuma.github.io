@@ -207,7 +207,7 @@ footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);font-si
 <!-- ================= APPS ================= -->
 <section id="apps">
   <div class="sh"><h2>iOS アプリ</h2><span class="cnt">RELEASED / TESTFLIGHT</span></div>
-  <p class="sd">App Store で公開中のもの、TestFlight で配布中のもの。サポートページとプライバシーポリシーも自分で用意して運用しています。</p>
+  <p class="sd">App Store で公開中のもの、TestFlight で配布中のもの、そして手元で動かしているもの。配布しているものは、サポートページとプライバシーポリシーも自分で用意して運用しています。</p>
 
   <div class="lead-card">
     <div class="body">
@@ -233,6 +233,32 @@ footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);font-si
     </div>
   </div>
 
+  <div class="lead-card">
+    <div class="body">
+      <span class="badge b-beta">TestFlight 配布中 · 9拠点で稼働</span>
+      <h3>虹予報 / Aloha Rainbow</h3>
+      <div class="kicker">「今、外に出て空を見る価値があるか」を知らせるアプリ</div>
+      <p>
+        虹が出ていると言い切れる人はいません。でも「今すぐ外を見て」なら言えます。
+        そこだけを担当するアプリです。9 拠点の AWS Lambda が 10 分ごとに虹スコアを計算して S3 に配信し、
+        条件が揃った地域の端末にだけ通知を送ります。
+      </p>
+      <ul class="pts">
+        <li>拠点：東京・宮古島・沖縄・鹿児島・名古屋／Oahu・Maui・Kauai・Big Island</li>
+        <li>気象庁の高解像度降水ナウキャスト（250m・毎分更新）と NOAA MRMS（500m）を、外部ライブラリなしの純 Python で直接パース。汎用の 10km モデルでは拾えない局所的な雨を検出する</li>
+        <li>太陽高度・頭上の雨・太陽方向の雲を条件にし、反太陽方向を扇状（±40°×2〜8km）にサンプリングして「前方に雨があるか」を判定</li>
+        <li>通知は位置情報の許可レベルで出し分け。「常に」なら 2 時間先の予報まで、「使用中のみ」なら現在値のみ。1 端末につき朝夕 1 回まで</li>
+        <li>虹の目撃報告は 2km グリッドに丸めて保存し、自宅の座標が残らないようにしている</li>
+      </ul>
+      <div class="tech"><span>AWS Lambda</span><span>S3</span><span>DynamoDB</span><span>SNS / APNs</span><span>Python</span><span>SwiftUI</span><span>気象庁ナウキャスト</span><span>NOAA MRMS</span></div>
+      <div class="links">
+        <a href="/rainbow-forecast/">虹予報マップ</a>
+        <a href="https://testflight.apple.com/join/p8tjFrC6">TestFlight（日本語版）</a>
+        <a href="https://testflight.apple.com/join/U5VtEVYq">TestFlight（Aloha Rainbow）</a>
+      </div>
+    </div>
+  </div>
+
   <div class="grid">
     <div class="card">
       <span class="badge b-live">App Store 公開中</span>
@@ -248,39 +274,36 @@ footer{margin-top:56px;padding-top:22px;border-top:1px solid var(--line);font-si
     </div>
 
     <div class="card">
-      <span class="badge b-beta">TestFlight 配布中</span>
-      <h3>Aeolus</h3>
-      <div class="kicker">風向きルート提案</div>
-      <p>自転車で走るとき、行きは向かい風・帰りは追い風になるルートを提案するアプリ。当日と翌日の風予報を取得して比較できます。</p>
-      <div class="tech"><span>SwiftUI</span><span>MapKit</span><span>気象 API</span></div>
-      <div class="links">
-        <a href="/aeolus/">紹介ページ</a>
-        <a href="/aeolus/howto.html">インストール手順</a>
-      </div>
+      <span class="badge b-made">制作物</span>
+      <h3>RouteReplay</h3>
+      <div class="kicker">歩いたルートをストリートビューで再生する</div>
+      <p>
+        GPX を読み込むと、通った道をストリートビューで順に再生します。
+        作る前に実測ルートでパノラマのカバー率を検証し、256 点すべてで取得できることを確かめてから実装に入りました。
+      </p>
+      <ul class="pts">
+        <li>課金モデルの違う 2 方式を作り分け。360° 見渡せる版と、画像を端末にキャッシュして 2 回目以降は無料になる節約版</li>
+        <li>GPS の揺らぎを Douglas-Peucker 法で平滑化してから等間隔に取り直す</li>
+        <li>mp4 書き出しに対応。地図を重ねて「どこを通ったか」も同時に見せる</li>
+        <li>実機のメモリ不足を、フレームを溜め込まず 1 枚ずつ書き出す方式に変えて解消</li>
+      </ul>
+      <div class="tech"><span>SwiftUI</span><span>Google Maps SDK</span><span>Street View API</span><span>AVAssetWriter</span><span>Python</span></div>
     </div>
 
     <div class="card">
-      <span class="badge b-beta">TestFlight 配布中</span>
-      <h3>ZaikoSnap</h3>
-      <div class="kicker">写真で在庫を記録する</div>
-      <p>買い物・在庫管理を、入力ではなく写真で済ませるためのアプリ。インストール手順ページを用意して配布しています。</p>
-      <div class="tech"><span>SwiftUI</span><span>カメラ</span></div>
-      <div class="links">
-        <a href="https://testflight.apple.com/join/ke4TDRqm">TestFlight で試す</a>
-        <a href="/zaiko-snap/howto.html">インストール手順</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <span class="badge b-beta">TestFlight 配布中</span>
-      <h3>ZaikoApp001</h3>
-      <div class="kicker">在庫・買い物管理</div>
-      <p>在庫管理アプリの別アプローチ版。同じ課題に対して構成を変えて作り直したものです。</p>
-      <div class="tech"><span>SwiftUI</span></div>
-      <div class="links">
-        <a href="https://testflight.apple.com/join/t18yzZtd">TestFlight で試す</a>
-        <a href="/zaikoapp001/howto.html">インストール手順</a>
-      </div>
+      <span class="badge b-made">制作物</span>
+      <h3>GeoInk</h3>
+      <div class="kicker">歩いた軌跡で、地図に絵を描く</div>
+      <p>
+        地図上に図形を置いてスケールと回転を決めると、実際の道路に沿った歩行ルートを生成します。
+        あとはそこを歩くだけで、軌跡が図形になります。iPhone と Mac の両対応で、Mac で設計して iPhone で歩けます。
+      </p>
+      <ul class="pts">
+        <li>ハート・クローバー・魚・紙飛行機などのプリセットを、正規化座標から現在の地図範囲へ変換して配置</li>
+        <li>記録した軌跡を GPX で共有できるが、<strong>点ごとの時刻はあえて書き出さない</strong>。位置と時刻と速度が揃うと生活パターンを特定できてしまうため、合計距離と合計時間だけを残す設計にした</li>
+        <li>記録中にアプリが落ちても、コースと軌跡と経過時間ごと復元して記録を再開する</li>
+      </ul>
+      <div class="tech"><span>SwiftUI</span><span>MapKit</span><span>MKDirections</span><span>CoreLocation</span><span>iCloud</span><span>Mac Catalyst</span></div>
     </div>
   </div>
 </section>
